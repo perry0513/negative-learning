@@ -241,16 +241,23 @@ def get_positive_example(demonstrations, batch_size=20):
             visit_c7 = False
             for d in demo:
                 grid = np.zeros((3, *grid_shape))
-                #getting location of agent and placing agent in grid
+                # getting location of agent and placing agent in grid
                 state = d[0][0] if easy_grid else d[0]
                 (x,y) = pos_to_idx[state]
                 grid[0][h-y][x] = 1
-                #placing walls in grid
+
+                # Logic for hard grid
+                if state == 'A5':
+                    visit_a5 = True
+                if visit_a5 and state == 'C7':
+                    visit_c7 = True
+
+                # placing walls in grid
                 for w in walls:
                     (x,y) = pos_to_idx[w]
                     grid[1][h-y][x] = 1
                 
-                #placing object in grid
+                # placing object in grid
                 if easy_grid:
                     if d[2] == 'TRUE':
                         (x,y) = pos_to_idx[object_pos] 
@@ -258,10 +265,10 @@ def get_positive_example(demonstrations, batch_size=20):
                 # changing state after visiting
                 else:
                     (x_a5,y_a5) = pos_to_idx["A5"]
-                    grid[2][5-y_a5][x_a5] = 0 if visit_a5 else 1
+                    grid[2][h-y_a5][x_a5] = 0 if visit_a5 else 1
 
                     (x_c7,y_c7) = pos_to_idx["C7"]
-                    grid[2][5-y_c7][x_c7] = 0 if visit_c7 else 1
+                    grid[2][h-y_c7][x_c7] = 0 if visit_c7 else 1
                     
                 actions.append(moves[d[1]])
                 states.append(grid.flatten())
@@ -366,11 +373,9 @@ def evaluate(model, num_trials, eval_method='argmax'):
     for iter in range(num_trials):
         start = random.choice(list(set(grid_locations) - set(walls)))
         start_pos = start
-        if easy_grid:
-            pick = False
-        else:
-            visit_a5 = False
-            visit_c7 = False
+        pick = False
+        visit_a5 = False
+        visit_c7 = False
         nr = False
         for i in range(horizon):
 
@@ -672,9 +677,9 @@ def experiment0(dir_name='exp0/'):
     exp_path = data_path + dir_name
 
     Path(exp_path).mkdir(parents=True, exist_ok=True)
-    for num in num_demonstrations[5:]:
+    for num in num_demonstrations:
         all_rewards = []
-        for i in range(1):
+        for i in range(5):
             print(f'***********')
             print(f'# demo = {num}')
             print(f'***********')
@@ -687,7 +692,7 @@ def experiment0(dir_name='exp0/'):
                 print(f'==== Positive Iter {itr} ====')    
                 demonstrations = shuffle(demonstrations)
                 dataloader = get_positive_example(demonstrations[:num])
-                iterations, rewards_epoch = train_with_positive_examples(model, dataloader, 100)
+                iterations, rewards_epoch = train_with_positive_examples(model, dataloader, 10)
 
                 rewards.append(rewards_epoch[-1])
             
