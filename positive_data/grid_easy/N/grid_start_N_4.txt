@@ -1,0 +1,6 @@
+Steps\Vars	state	actions	object	
+Step1	NN	pick	TRUE	
+Step2	NN	left	FALSE	
+Step3	MM	down	FALSE	
+Step4	RR	up	FALSE	
+Step5	MM	down	FALSE	

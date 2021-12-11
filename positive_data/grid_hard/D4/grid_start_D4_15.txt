@@ -1,0 +1,17 @@
+Steps\Vars	state	actions	
+Step1	D4	left	
+Step2	D3	left	
+Step3	D2	down	
+Step4	E2	right	
+Step5	E3	right	
+Step6	E4	up	
+Step7	D4	up	
+Step8	C4	up	
+Step9	B4	right	
+Step10	B5	up	
+Step11	A5	right	
+Step12	A6	down	
+Step13	B6	down	
+Step14	C6	right	
+Step15	C7	left	
+Step16	C6	right	
